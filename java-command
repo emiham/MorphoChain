@@ -1,3 +1,5 @@
-PARAMS=params.properties.tur
-timestamp="$(date +"%T")"
-java -ea  -Dfile.encoding=UTF-8 -Djava.library.path=lib/ -classpath "./lib/*:./out/production/Morphology" Main $PARAMS >outputs_time/$timestamp;
+#! /usr/bin/bash
+
+PARAMS=params.properties
+timestamp="$(date +"%m%d_%T")"
+java -ea -Xmx8G  -Dfile.encoding=UTF-8 -Djava.library.path=lib/ -classpath "./lib/*:./out/production/Morphology" Main $PARAMS >outputs_time/$timestamp;
