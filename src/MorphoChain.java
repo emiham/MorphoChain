@@ -394,7 +394,7 @@ public class MorphoChain {
             affix = word.substring(0, word.length() - parent.length());
             if(affix.length() > MAX_AFFIX_LENGTH || !prefixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK")) {
-                // CG: SUFFIX - morfem som motsvarar inledning
+                // CG: PREFIX - morfem som motsvarar inledning
                 Tools.addFeature(features, inVocab + "PREFIX_" + affix, 1);
             }
 
