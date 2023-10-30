@@ -223,6 +223,7 @@ public class MorphoChain {
         }
 
         if(DOT)
+            // CG: COSINE SIMILARITY - hur semantiskt lika word och parent är
             Tools.addFeature(features, "DOT", cosine);
 
         //affix
@@ -230,9 +231,11 @@ public class MorphoChain {
         String inVocab = "";
 
         if(word2Cnt.containsKey(parent) && word2Cnt.get(parent) > HEURISTIC_FREQ_THRESHOLD) {
+            // CG: IN VOCAB - parent finns i ordlista
             Tools.addFeature(features, "_IV_", Math.log(word2Cnt.get(parent)));
         }
         else
+            // CG: OUT OF VOCAB - parent finns ej i ordlista
             Tools.addFeature(features, "_OOV_", 1.);
 
 
