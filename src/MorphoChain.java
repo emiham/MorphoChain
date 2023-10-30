@@ -254,7 +254,7 @@ public class MorphoChain {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
-                        // CG: AFFIX CORRELATION? - parent har andra affix än suffixet ovan
+                        // CG: AFFIX CORRELATION? - parent har andra suffix än det ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -265,11 +265,11 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
-                // CG: BOUNDARY - ändelsen + 1 bokstav innan?
+                // CG: BOUNDARY - sista bokstaven i parent
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
 
                 if (parent.length() >= 2) {
-                    // CG: BOUNDARY - ändelsen + 2 bokstäver innan?
+                    // CG: BOUNDARY - sista 2 bokstäverna i parent
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
                 }
             }
@@ -289,7 +289,7 @@ public class MorphoChain {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
-                        // CG: AFFIX CORRELATION? - parent har andra affix än suffixet ovan
+                        // CG: AFFIX CORRELATION? - parent har andra suffix än det ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -300,14 +300,15 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
-                // CG: BOUNDARY - ändelsen + 1 bokstav innan?
+                // CG: BOUNDARY - sista bokstaven i parent
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
                 if (parent.length() >= 2)
-                    // CG: BOUNDARY - ändelsen + 2 bokstäver innan?
+                    // CG: BOUNDARY - sista 2 bokstäverna i parent
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
             }
             //REPEAT specific features
             int parentLen = parent.length();
+            // CG: REPEAT - ta bokstaven i word som är precis efter parent
             Tools.addFeature(features, inVocab+"REPEAT_"+ word.charAt(parentLen), 1.);
 
         }
@@ -318,12 +319,14 @@ public class MorphoChain {
             affix = word.substring(parent.length());
             if (!suffixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK"))
+                // CG: SUFFIX - morfem som motsvarar ändelse
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix, 1.);
 
             if(AFFIX_NEIGHBORS && suffixNeighbor.containsKey(affix)) {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
+                        // CG: AFFIX CORRELATION? - parent har andra suffix än det ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -334,13 +337,17 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
+                // CG: BOUNDARY - sista bokstaven i parent
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
                 if (parent.length() >= 2)
+                    // CG: BOUNDARY - sista 2 bokstäverna i parent
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
             }
 
             //MODIFY specific features
             int parentLen = parent.length();
+            // CG: MODIFY - hämta sista bokstaven i parent och bokstaven på samma plats i word
+            // CG: exempel: carry - carried -> y_i
             Tools.addFeature(features, inVocab+"MODIFY_"+parent.charAt(parentLen - 1)+"_"+word.charAt(parentLen - 1), 1.);
         }
 
@@ -350,12 +357,14 @@ public class MorphoChain {
             affix = word.substring(parent.length());
             if (!suffixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK"))
+                // CG: SUFFIX - morfem som motsvarar ändelse
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix, 1.);
 
             if(AFFIX_NEIGHBORS && suffixNeighbor.containsKey(affix)) {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
+                        // CG: AFFIX CORRELATION? - parent har andra suffix än det ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -366,13 +375,16 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
+                // CG: BOUNDARY - sista bokstaven i parent
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
                 if (parent.length() >= 2)
+                    // CG: BOUNDARY - sista 2 bokstäverna i parent
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
             }
 
             //DELETE specific features
             int parentLen = parent.length();
+            // CG: DELETE - sista bokstaven i parent (lär betyda att den bokstaven saknas i word)
             Tools.addFeature(features, inVocab+"DELETE_"+parent.charAt(parentLen - 1), 1.);
         }
 
@@ -382,6 +394,7 @@ public class MorphoChain {
             affix = word.substring(0, word.length() - parent.length());
             if(affix.length() > MAX_AFFIX_LENGTH || !prefixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK")) {
+                // CG: SUFFIX - morfem som motsvarar inledning
                 Tools.addFeature(features, inVocab + "PREFIX_" + affix, 1);
             }
 
@@ -389,6 +402,7 @@ public class MorphoChain {
                 int i = 0;
                 for(String neighbor : prefixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(neighbor + parent)) {
+                        // CG: AFFIX CORRELATION? - parent har andra prefix än det ovan
                         Tools.addFeature(features, "COR_P_" + affix, 1.);
                         break;
                     }
@@ -399,8 +413,10 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
+                // CG: BOUNDARY - första bokstaven i parent?
                 Tools.addFeature(features, inVocab + "PREFIX_" + affix + "_BOUNDARY_" + parent.substring(0, 1), 1.);
                 if (parent.length() >= 2)
+                    // CG: BOUNDARY - första 2 bokstäverna i parent?
                     Tools.addFeature(features, inVocab + "PREFIX_" + affix + "_BOUNDARY_" + parent.substring(0, 2), 1.);
             }
         }
