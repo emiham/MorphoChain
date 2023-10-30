@@ -200,6 +200,7 @@ public class MorphoChain {
             return  w2P2TypeFeatures.get(word).get(parent).get(type);
 
 
+        // ------- CG: type ------- 
         //stop features
         if(type == STOP || parent.equals(word)) {
              HashMap<Integer, Double> stopFeatures = getStopFeatures(word);
@@ -238,12 +239,14 @@ public class MorphoChain {
             // CG: OUT OF VOCAB - parent finns ej i ordlista
             Tools.addFeature(features, "_OOV_", 1.);
 
-
+        // ------- CG: type ------- 
         if(type == SUFFIX) {
             //suffix case
+            // CG: klipp av parent från word och ta den resterande ändelsen
             affix = word.substring(parent.length());
             if (affix.length() > MAX_AFFIX_LENGTH || !suffixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK")) {
+                // CG: SUFFIX - morfem som motsvarar ändelse
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix, 1.);
             }
 
@@ -251,6 +254,7 @@ public class MorphoChain {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
+                        // CG: AFFIX CORRELATION? - parent har andra affix än suffixet ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -259,21 +263,25 @@ public class MorphoChain {
                 }
             }
 
-
             //context features
             if(AFFIX_CONTEXT) {
+                // CG: BOUNDARY - ändelsen + 1 bokstav innan?
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
 
                 if (parent.length() >= 2) {
+                    // CG: BOUNDARY - ändelsen + 2 bokstäver innan?
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
                 }
             }
         }
+
+        // ------- CG: type ------- 
         else if (type == REPEAT) {
             //assuming affix is only on the right side
             affix = word.substring(parent.length()+1);
             if (!suffixes.contains(affix)) affix = "UNK";
             if(!affix.equals("UNK")) {
+                // CG: SUFFIX - morfem som motsvarar ändelse
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix, 1.);
             }
 
@@ -281,6 +289,7 @@ public class MorphoChain {
                 int i = 0;
                 for(String neighbor : suffixNeighbor.get(affix).keySet()) {
                     if (word2Cnt.containsKey(parent + neighbor)) {
+                        // CG: AFFIX CORRELATION? - parent har andra affix än suffixet ovan
                         Tools.addFeature(features, "COR_S_" + affix, 1.);
                         break;
                     }
@@ -291,8 +300,10 @@ public class MorphoChain {
 
             //context features
             if(AFFIX_CONTEXT) {
+                // CG: BOUNDARY - ändelsen + 1 bokstav innan?
                 Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 1), 1.);
                 if (parent.length() >= 2)
+                    // CG: BOUNDARY - ändelsen + 2 bokstäver innan?
                     Tools.addFeature(features, inVocab + "SUFFIX_" + affix + "_BOUNDARY_" + parent.substring(parent.length() - 2), 1.);
             }
             //REPEAT specific features
@@ -300,6 +311,8 @@ public class MorphoChain {
             Tools.addFeature(features, inVocab+"REPEAT_"+ word.charAt(parentLen), 1.);
 
         }
+
+        // ------- CG: type ------- 
         else if (type == MODIFY) { //change last letter of parent
             //assuming affix is only on the right side
             affix = word.substring(parent.length());
@@ -331,6 +344,7 @@ public class MorphoChain {
             Tools.addFeature(features, inVocab+"MODIFY_"+parent.charAt(parentLen - 1)+"_"+word.charAt(parentLen - 1), 1.);
         }
 
+        // ------- CG: type ------- 
         else if (type == DELETE) { //add last letter of parent
             //assuming affix is only on the right side
             affix = word.substring(parent.length());
@@ -362,6 +376,7 @@ public class MorphoChain {
             Tools.addFeature(features, inVocab+"DELETE_"+parent.charAt(parentLen - 1), 1.);
         }
 
+        // ------- CG: type ------- 
         else if (type == PREFIX) {
             assert word.length() != parent.length();
             affix = word.substring(0, word.length() - parent.length());
