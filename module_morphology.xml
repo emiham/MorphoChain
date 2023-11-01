@@ -6,7 +6,7 @@
   <property name="module.jdk.bin.morphology" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.morphology" value="${project.jdk.classpath}"/>
   
-  <property name="compiler.args.morphology" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  <property name="compiler.args.morphology" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
   
   <property name="morphology.output.dir" value="${module.morphology.basedir}/out/production/Morphology"/>
   <property name="morphology.testoutput.dir" value="${module.morphology.basedir}/out/test/Morphology"/>
@@ -75,7 +75,6 @@
       <include name="src"/>
     </dirset>
     <dirset dir="${module.morphology.basedir}/lib/lbfgsb_wrapper-1.1.2-src">
-      <include name="test"/>
       <include name="src"/>
       <include name="raw_wrapper/dist/src"/>
     </dirset>
@@ -96,10 +95,6 @@
     
     <copy todir="${morphology.output.dir}">
       <fileset dir="${module.morphology.basedir}/src">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-      <fileset dir="${module.morphology.basedir}/lib/lbfgsb_wrapper-1.1.2-src/test">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
